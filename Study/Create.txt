@@ -1,0 +1,26 @@
+try
+ {
+     OpenFileDialog dialog = new OpenFileDialog();
+     dialog.Filter = "Certificado Digital (*.p12)|*.p12|Certificado Digital (*.pfx)|*.pfx";
+     dialog.FilterIndex = 2;
+     if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+     {
+           string senha = Microsoft.VisualBasic.Interaction.InputBox("Digite sua senha", 
+               "ATENÇÃO", "Default", 0, 0);
+  
+           X509Certificates.X509Certificate2 certificado = 
+              new X509Certificate2(dialog.FileName, senha, X509KeyStorageFlags.Exportable | 
+                X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet);
+           X509Certificates.X509Store storePessoal = new                  
+              X509Certificates.X509Store(StoreName.My, StoreLocation.CurrentUser);
+           storePessoal.Open(OpenFlags.ReadWrite);
+           storePessoal.Add(certificado);                        
+           MessageBox.Show("Certificado Importado com Sucesso", "ATENÇÃO", 
+             MessageBoxButtons.OK, MessageBoxIcon.Information);
+     }
+ }
+ catch (Exception ex)
+ {
+     MessageBox.Show("Erro ao importar certificado", "ATENÇÃO", MessageBoxButtons.OK,    
+        MessageBoxIcon.Error);
+ }

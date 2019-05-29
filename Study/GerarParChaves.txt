@@ -1,0 +1,66 @@
+private void GerarParChaves()
+ {
+     try
+     {
+           var geradorAleatoriedade = new Org.BouncyCastle.Crypto.Prng.
+            CryptoApiRandomGenerator();
+
+           var valorAleatorio = new Org.BouncyCastle.Security.
+             SecureRandom(geradorAleatoriedade);
+
+           var parametrosGeracaoChave = new Org.BouncyCastle.Crypto.
+             KeyGenerationParameters(valorAleatorio, 2048);
+
+           var geradorChaves = new Org.BouncyCastle.Crypto.Generators.
+           RsaKeyPairGenerator();
+           geradorChaves.Init(parametrosGeracaoChave);
+
+           var parChaves = geradorChaves.GenerateKeyPair();
+
+           System.IO.TextWriter tw = new System.IO.StringWriter();
+           Org.BouncyCastle.OpenSsl.PemWriter pw = new     
+             Org.BouncyCastle.OpenSsl.PemWriter(tw);
+           pw.WriteObject(parChaves.Private);
+           pw.Writer.Flush();
+
+           string stringPrivate = tw.ToString();
+
+           tw = new StringWriter();
+           pw = new PemWriter(tw);
+           pw.WriteObject(parChaves.Public);
+           pw.Writer.Flush();
+
+           string stringPublic = tw.ToString();
+
+           SaveFileDialog dialog = new SaveFileDialog();
+           dialog.Filter = "Chave Pública (*.cer)|*.cer";
+           dialog.FilterIndex = 1;
+           dialog.RestoreDirectory = true;
+
+           if (dialog.ShowDialog() == DialogResult.OK)
+           {
+                  File.WriteAllText(dialog.FileName, stringPublic, Encoding.ASCII);
+           }
+
+          MessageBox.Show("Chave Pública salva com sucesso", "ATENÇÃO",  
+             MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+           dialog = new SaveFileDialog();
+           dialog.Filter = "Chave Privada (*.pvk)|*.pvk";
+           dialog.FilterIndex = 1;
+           dialog.RestoreDirectory = true;
+
+           if (dialog.ShowDialog() == DialogResult.OK)
+           {
+                  File.WriteAllText(dialog.FileName, stringPrivate, Encoding.ASCII);
+          }
+
+           MessageBox.Show("Chave Privada salva com sucesso", "ATENÇÃO",   
+           MessageBoxButtons.OK, MessageBoxIcon.Information);
+     }
+     catch (Exception ex)
+     {
+           MessageBox.Show(ex.Message, "ATENÇÃO", MessageBoxButtons.OK, 
+           MessageBoxIcon.Exclamation);
+     }
+ }
