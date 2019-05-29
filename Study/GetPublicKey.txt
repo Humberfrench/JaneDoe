@@ -1,0 +1,24 @@
+01 private AsymmetricKeyParameter GetChavePrivada()
+02 {
+03     AsymmetricKeyParameter parametro = null;
+04
+05     OpenFileDialog dialog = new OpenFileDialog();
+06     dialog.Filter = "Chave Privada (*.pvk)|*.pvk";
+07     dialog.FilterIndex = 1;
+08     if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+09     {
+10           var bytesChave = Convert.FromBase64String
+            (File.ReadAllText(dialog.FileName).Replace
+             ("-----BEGIN RSA PRIVATE KEY-----\r\n", "").Replace 
+             ("-----END RSA PRIVATE KEY-----", ""));
+11           AsymmetricCipherKeyPair pair;
+12           using (var reader = File.OpenText(dialog.FileName))
+13           {
+14                  pair = (AsymmetricCipherKeyPair)
+                    new Org.BouncyCastle.OpenSsl.PemReader(reader).ReadObject();
+15                  parametro = pair.Private;
+16           }
+17     }
+18
+19     return parametro;
+20 }

@@ -1,0 +1,17 @@
+01 private AsymmetricKeyParameter GetChavePublica()
+02 {
+03     AsymmetricKeyParameter parametro = null;
+04     OpenFileDialog dialog = new OpenFileDialog();
+05     dialog.Filter = "Chave Pública (*.cer)|*.cer";
+06     dialog.FilterIndex = 1;
+07     if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+08     {
+09           string conteudo = File.ReadAllText(dialog.FileName).Replace
+              ("-----BEGIN PUBLIC KEY-----\r\n", "").Replace
+               ("-----END PUBLIC KEY-----", "");
+10           byte[] bytesConteudo = Convert.FromBase64String(conteudo);
+11           parametro = PublicKeyFactory.CreateKey(bytesConteudo);
+12     }
+13
+14     return parametro;
+15 }
